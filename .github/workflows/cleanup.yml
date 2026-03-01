@@ -1,0 +1,41 @@
+name: 清理过期链接
+
+on:
+  schedule:
+    # 每天 UTC 00:00 运行 (北京时间 08:00)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允许手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 运行清理脚本
+        run: node cleanup_expired.js
+
+      - name: 提交并推送变更
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # 检查是否有文件变更
+          if [[ -n $(git status -s) ]]; then
+            git add js/rules_intermediate.js js/rules_direct.js
+            git commit -m "chore: remove expired short links [skip ci]"
+            git push
+            echo "变更推送成功。"
+          else
+            echo "没有需要提交的变更。"
+          fi
