@@ -1,3 +1,7 @@
+防止rules_intermediate.js恶意过度添加
+-
+window.RULES_INTERMEDIATE = {}
+---
 手动添加注意事项
 ---
     "/github": {
