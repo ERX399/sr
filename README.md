@@ -21,7 +21,7 @@
 ## 项目原作者
 * 二叉树树的重定向[[点击前往项目](github.com/AFOIM/Static_Redirect_Group)]
 * 二叉树树的博客[[点击前往博客](2x.nz/sponsors)]
-# ❤️ 赞助
+## ❤️ 赞助
 如果这个项目对你有帮助,欢迎给一个 Star⭐️！
-[[赞助原作者](2x.nz/sponsors)]
-[[赞助我](399520.xyz/s399)]
+*[[赞助原作者](2x.nz/sponsors)]
+*[[赞助我](399520.xyz/s399)]
