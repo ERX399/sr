@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建短链 | 夏</title>
+    <link rel="icon" href="https://q2.qlogo.cn/headimg_dl?dst_uin=2726730791&amp;spec=0">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            background: #2563eb;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .message {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        .error {
+            color: #dc2626;
+        }
+        .success {
+            color: #059669;
+        }
+        .tip-message {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .tip-message a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .tip-message a:hover {
+            text-decoration: underline;
+        }
+        .footer-links {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .footer-links a {
+            color: #6b7280;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+        .footer-links a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>创建短链</h2>
+        <form id="createForm">
+            <div class="form-group">
+                <label for="pathname">短链路径 (5-20位)</label>
+                <input type="text" id="pathname" name="pathname" minlength="1" maxlength="20" required pattern="[a-zA-Z0-9_-]{1,20}" placeholder="例如: mylink">
+            </div>
+            
+            <div class="form-group">
+                <label for="url">目标 URL (最大300字符)</label>
+                <input type="url" id="url" name="url" maxlength="300" required placeholder="https://example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="expired_at">失效时间 (当地时间)</label>
+                <input type="datetime-local" id="expired_at" name="expired_at" required>
+            </div>
+
+            <button type="submit" id="submitBtn">创建短链</button>
+        </form>
+        <div id="message" class="message"></div>
+
+        <div class="tip-message">
+            如果您想要无中间页或更短的pathname，请 <a href="https://399520.xyz/s399" target="_blank">赞助</a>
+        </div>
+
+        <div class="footer-links">
+            <a href="https://github.com" target="_blank">GitHub</a>
+            <span>|</span>
+            <a href="https://399520.xyz" target="_blank">HAGo</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('createForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('message');
+            
+            submitBtn.disabled = true;
+            messageDiv.textContent = '提交中...';
+            messageDiv.className = 'message';
+
+            const pathname = document.getElementById('pathname').value;
+            const url = document.getElementById('url').value;
+            const expiredAtInput = document.getElementById('expired_at').value;
+
+            // 验证
+            if (pathname.length < 1 || pathname.length > 20) {
+                showError('路径长度必须在5-20位之间');
+                return;
+            }
+            if (url.length > 300) {
+                showError('URL过长');
+                return;
+            }
+
+            // 转换为 Unix 时间戳 (秒)
+            const expiredDate = new Date(expiredAtInput);
+            const timestamp = Math.floor(expiredDate.getTime() / 1000);
+            
+            if (isNaN(timestamp)) {
+                showError('无效的日期');
+                return;
+            }
+
+            try {
+                // 假设 Worker 部署在 /api/create 或者同一域名下
+                // 这里使用相对路径，假设 Worker 路由配置为 /api/create
+                // 如果是独立域名，请修改此处
+                const response = await fetch('/api/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pathname: pathname,
+                        url: url,
+                        expired_at: timestamp
+                    })
+                });
+
+                const text = await response.text();
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    // 如果不是 JSON，可能是服务器报错页面
+                    console.error("Non-JSON response:", text);
+                    throw new Error("服务器返回了非预期的数据: " + (text.substring(0, 100) || "空响应"));
+                }
+
+                if (response.ok) {
+                    // 优先使用后端返回的 URL，否则使用当前域名拼接
+                    const finalUrl = result.short_url || ('https://' + window.location.hostname + '/' + pathname);
+                    
+                    // 使用后端返回的 Commit URL 或 fallback 到 Actions 列表
+                    const actionsUrl = result.commit_url || `https://github.com/erx399/sr`;
+                    
+                    messageDiv.innerHTML = '';
+                    
+                    const p1 = document.createElement('p');
+                    p1.textContent = '提交成功，您的短链正在构建中，稍等大约一分钟。';
+                    
+                    const p2 = document.createElement('p');
+                    p2.appendChild(document.createTextNode('您也可以前往 '));
+                    const link1 = document.createElement('a');
+                    link1.href = actionsUrl;
+                    link1.target = "_blank";
+                    link1.textContent = "构建状态页面";
+                    p2.appendChild(link1);
+                    p2.appendChild(document.createTextNode(' 查看构建状态，'));
+                    
+                    const p3 = document.createElement('p');
+                    p3.appendChild(document.createTextNode('之后再尝试访问： '));
+                    const link2 = document.createElement('a');
+                    
+                    // 安全检查: 防止 javascript: 等伪协议
+                    let safeUrl = '#';
+                    try {
+                        const parsed = new URL(finalUrl);
+                        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+                            safeUrl = finalUrl;
+                        } else {
+                            console.error("Unsafe protocol:", parsed.protocol);
+                            finalUrl = "[Unsafe URL blocked]";
+                        }
+                    } catch (e) {
+                        console.error("Invalid URL:", e);
+                        finalUrl = "[Invalid URL]";
+                    }
+
+                    link2.href = safeUrl;
+                    link2.target = "_blank";
+                    link2.textContent = finalUrl;
+                    p3.appendChild(link2);
+                    
+                    messageDiv.appendChild(p1);
+                    messageDiv.appendChild(p2);
+                    messageDiv.appendChild(p3);
+
+                    messageDiv.className = 'message success';
+                    document.getElementById('createForm').reset();
+                } else {
+                    showError(result.error || '提交失败');
+                }
+            } catch (err) {
+                console.error(err);
+                showError(err.message || '网络错误或请求失败');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        function showError(msg) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = msg;
+            messageDiv.className = 'message error';
+            document.getElementById('submitBtn').disabled = false;
+        }
+    </script>
+</body>
+</html>

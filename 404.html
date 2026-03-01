@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+    <title>Redirecting... - AcoFork</title>
+    <link rel="icon" href="https://q2.qlogo.cn/headimg_dl?dst_uin=2726730791&amp;spec=0">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: center;
+            max-width: 90%;
+            width: 480px;
+            display: none; /* 默认隐藏，JS 决定显示还是直接跳转 */
+        }
+        h2 {
+            margin-top: 0;
+            color: #1a1a1a;
+        }
+        p {
+            color: #4a4a4a;
+            margin-bottom: 1.5rem;
+        }
+        .url-box {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 6px;
+            word-break: break-all;
+            margin: 1.5rem 0;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            color: #6b7280;
+            font-size: 0.875rem;
+            border: 1px solid #e5e7eb;
+        }
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn:hover {
+            background: #1d4ed8;
+        }
+        .btn:active {
+            background: #1e40af;
+        }
+        .footer-links {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .footer-links a {
+            color: #6b7280;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+        .footer-links a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+    </style>
+    <script src="/js/config.js"></script>
+    <script src="/js/rules_direct.js"></script>
+    <script src="/js/rules_intermediate.js"></script>
+    <script src="/js/redirect.js" defer></script>
+</head>
+<body>
+    <div class="card">
+        <h2>即将跳转</h2>
+        <p>您即将访问外部链接，请确认：</p>
+        <div id="url-display" class="url-box">Loading...</div>
+        <a id="redirect-link" href="#" class="btn">继续访问</a>
+
+        <div class="footer-links">
+            <a href="https://github.com/afoim/Static_Redirect_Group" target="_blank">GitHub</a>
+            <span>|</span>
+            <a href="https://2x.nz" target="_blank">Blog</a>
+        </div>
+    </div>
+</body>
+</html>
