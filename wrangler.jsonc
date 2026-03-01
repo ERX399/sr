@@ -1,6 +1,6 @@
 {
   "compatibility_date": "2025-07-03",
-  "name": "static-redirect-group",
+  "name": "sr",
   "main": "worker.js",
     "observability": {
     "enabled": false,
