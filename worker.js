@@ -208,7 +208,21 @@ export default {
           });
       }
 
-      const expiredAtISO = expiredDate.toISOString();
+      // 生成 UTC+8 格式的 ISO 8601 字符串
+      function toISOStringUTC8(date) {
+        // 创建一个新的日期对象，添加 8 小时
+        const utc8Date = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+        // 获取各个部分
+        const year = utc8Date.getUTCFullYear();
+        const month = String(utc8Date.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(utc8Date.getUTCDate()).padStart(2, '0');
+        const hours = String(utc8Date.getUTCHours()).padStart(2, '0');
+        const minutes = String(utc8Date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(utc8Date.getUTCSeconds()).padStart(2, '0');
+        // 格式化为 ISO 8601 字符串，使用 +08:00 时区
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}+08:00`;
+      }
+      const expiredAtISO = toISOStringUTC8(expiredDate);
 
       // 3. 获取 GitHub 文件
       const owner = env.GITHUB_OWNER; // 需要在 Worker 环境变量中设置
