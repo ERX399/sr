@@ -194,7 +194,7 @@ export default {
       // 检查有效期是否超过 7 天
       const diffTime = expiredDate.getTime() - now.getTime();
       const diffDays = diffTime / (1000 * 3600 * 24);
-      if (diffDays > 7) {
+      if (diffDays > 8) {
           return Response.json({ error: "过期时间不能超过当前时间 7 天" }, { 
               status: 400,
               headers: { "Access-Control-Allow-Origin": "*" }
