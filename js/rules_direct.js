@@ -3,7 +3,7 @@ window.RULES_DIRECT = {
         "url": "https://hago.520pro.top/",
         "expired_at": ""
     },
-    "/s399": {
+    "/a399": {
         "url": "https://afdian.com/a/erx399",
         "expired_at": ""
     },
